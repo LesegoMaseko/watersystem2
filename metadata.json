@@ -1,0 +1,6 @@
+{
+  "name": "WaterWatch Gauteng",
+  "description": "Civic water supply monitoring, outage schedules, reservoir levels, and community reporting for Johannesburg and Gauteng.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
