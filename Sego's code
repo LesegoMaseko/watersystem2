@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>WaterWatch Gauteng — UI Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F6F7F5; --surface:#FFFFFF; --border:#E3E5E0; --text:#1C1F1E; --muted:#6B7268;
+    --accent:#0F6E6B; --accent-tint:#E6F2F1;
+    --success:#2F7D52; --success-tint:#EAF6EE;
+    --warning:#B5700A; --warning-tint:#FDF3E3;
+    --danger:#B3261E; --danger-tint:#FBEAEA;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171A; --surface:#1B1F22; --border:#2A2F33; --text:#F2F3F1; --muted:#9BA2A0;
+      --accent-tint:#163432; --success-tint:#15271C; --warning-tint:#2B2013; --danger-tint:#2B1716;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171A; --surface:#1B1F22; --border:#2A2F33; --text:#F2F3F1; --muted:#9BA2A0;
+    --accent-tint:#163432; --success-tint:#15271C; --warning-tint:#2B2013; --danger-tint:#2B1716;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  html,body{height:100%;}
+  body{margin:0; background:var(--bg); color:var(--text); font-family:'Plus Jakarta Sans',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3{font-family:'Outfit','Plus Jakarta Sans',sans-serif; margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit; cursor:pointer;}
+  svg{display:block;}
+  .icon{width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0;}
+  button{font-family:inherit; cursor:pointer;}
+
+  .banner{
+    background:var(--danger-tint); color:var(--danger); border-bottom:1px solid var(--border);
+    padding:8px 20px; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:600;
+  }
+  .banner .icon{width:14px;height:14px;}
+  .banner a{margin-left:auto; font-weight:700; text-decoration:underline; white-space:nowrap; background:none; border:none; color:inherit; font-size:inherit; padding:0;}
+
+  header.app{
+    display:flex; align-items:center; gap:12px; padding:12px 20px; background:var(--surface);
+    border-bottom:1px solid var(--border); position:sticky; top:0; z-index:20;
+  }
+  .logo{display:flex; align-items:center; gap:8px; font-weight:700; font-size:15px; background:none; border:none; color:var(--text); padding:0;}
+  .logo .mark{width:26px;height:26px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .logo .mark .icon{width:14px;height:14px;stroke:#fff;}
+  .area-pill{display:flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--muted);
+    background:var(--bg); border:1px solid var(--border); padding:5px 10px; border-radius:6px; margin-left:4px;}
+  .header-actions{margin-left:auto; display:flex; align-items:center; gap:8px; position:relative;}
+  .icon-btn{width:32px;height:32px;border-radius:6px;border:1px solid var(--border); background:var(--surface);
+    display:flex;align-items:center;justify-content:center; position:relative; color:var(--muted);}
+  .icon-btn .dot{position:absolute; top:5px; right:6px; width:5px;height:5px;border-radius:50%;background:var(--danger);}
+  .btn-primary{background:var(--accent); color:#fff; font-weight:700; font-size:12.5px; padding:8px 13px;
+    border-radius:6px; display:flex; align-items:center; gap:5px; border:none;}
+  .btn-primary .icon{width:14px;height:14px;stroke:#fff;}
+
+  .notif-panel{
+    position:absolute; top:42px; right:0; width:260px; background:var(--surface); border:1px solid var(--border);
+    border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,.1); padding:6px; display:none; z-index:30;
+  }
+  .notif-panel.open{display:block;}
+  .notif-panel h4{font-size:12px; padding:6px 8px 4px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
+  .notif-row{padding:8px; border-radius:6px; font-size:12.5px;}
+  .notif-row:hover{background:var(--bg);}
+  .notif-row .t{font-weight:700;}
+  .notif-row .m{color:var(--muted); font-size:11.5px; margin-top:1px;}
+
+  .layout{display:flex; max-width:1160px; margin:0 auto;}
+  .sidebar{width:196px; flex-shrink:0; padding:16px 10px; border-right:1px solid var(--border); min-height:calc(100vh - 78px);}
+  .nav-item{display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:6px; width:100%; text-align:left;
+    font-size:13px; font-weight:600; color:var(--muted); margin-bottom:1px; background:none; border:none;}
+  .nav-item.active{background:var(--accent-tint); color:var(--accent);}
+  .nav-item:not(.active):hover{background:var(--bg);}
+  .sidebar-cta{margin-top:12px; border:1px solid var(--border); color:var(--text); text-align:center; padding:8px; width:100%;
+    border-radius:6px; font-weight:700; font-size:12.5px; background:var(--surface); display:flex; align-items:center; justify-content:center; gap:6px;}
+
+  main{flex:1; padding:20px 22px 90px; max-width:760px;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .greeting{font-size:18px; font-weight:700;}
+  .greeting-sub{color:var(--muted); font-size:13px; margin:2px 0 16px;}
+
+  .status-card{background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--success);
+    border-radius:8px; padding:16px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;}
+  .status-card .label{font-size:11px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.04em;}
+  .status-card .value{font-size:17px; font-weight:700; margin:3px 0 2px;}
+  .status-card .sub{font-size:12px; color:var(--muted);}
+  .status-card .pct{font-size:20px; font-weight:800; color:var(--success);}
+
+  .stats-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;}
+  .stat-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px;}
+  .stat-card .icon{color:var(--muted); margin-bottom:8px;}
+  .stat-card .num{font-size:16px; font-weight:800;}
+  .stat-card .lbl{font-size:11px; color:var(--muted); font-weight:600; margin-top:1px;}
+
+  .actions-row{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px;}
+  .action-btn{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 8px;
+    text-align:center; width:100%;}
+  .action-btn .icon{width:18px;height:18px; color:var(--accent); margin:0 auto 6px;}
+  .action-btn .t{font-size:11.5px; font-weight:700;}
+
+  .section-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:14px;}
+  .section-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;}
+  .section-head h3{font-size:13.5px; font-weight:700;}
+  .section-head .link{font-size:12px; color:var(--accent); font-weight:700; background:none; border:none; padding:0;}
+
+  .timeline{display:flex; gap:5px;}
+  .tl-item{flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;}
+  .tl-bar{width:100%; height:38px; border-radius:4px; background:var(--bg); display:flex; align-items:flex-end; overflow:hidden;}
+  .tl-fill{width:100%; border-radius:4px;}
+  .tl-time{font-size:9.5px; color:var(--muted); font-weight:600;}
+
+  .report-row{display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-top:1px solid var(--border);}
+  .report-row:first-child{border-top:none; padding-top:0;}
+  .report-dot{width:7px;height:7px;border-radius:50%; margin-top:5px; flex-shrink:0;}
+  .report-title{font-size:13px; font-weight:700;}
+  .report-meta{font-size:11.5px; color:var(--muted); margin-top:1px;}
+
+  .placeholder{display:flex; flex-direction:column; align-items:flex-start; gap:10px;}
+  .placeholder .icon{width:26px;height:26px; color:var(--accent);}
+  .placeholder p{font-size:13px; color:var(--muted); margin:0; line-height:1.5;}
+
+  .bottom-nav{position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border);
+    display:none; justify-content:space-around; align-items:center; padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px)); z-index:20;}
+  .bn-item{display:flex; flex-direction:column; align-items:center; gap:2px; font-size:9.5px; font-weight:700; color:var(--muted); padding:4px 8px; background:none; border:none;}
+  .bn-item.active{color:var(--accent);}
+  .bn-item .icon{width:18px;height:18px;}
+
+  .overlay{position:fixed; inset:0; background:rgba(15,17,16,.4); display:none; align-items:center; justify-content:center; z-index:40; padding:16px;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--surface); border-radius:10px; width:100%; max-width:380px; padding:18px; border:1px solid var(--border);}
+  .modal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+  .modal-head h3{font-size:14.5px; font-weight:700;}
+  .modal-close{width:26px;height:26px; border-radius:6px; border:1px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--muted);}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:11.5px; font-weight:700; color:var(--muted); margin-bottom:5px;}
+  .field select, .field textarea{
+    width:100%; border:1px solid var(--border); border-radius:6px; padding:8px 9px; font-family:inherit; font-size:13px; background:var(--bg); color:var(--text);
+  }
+  .field textarea{resize:vertical; min-height:70px;}
+  .area-option{display:flex; align-items:center; justify-content:space-between; padding:9px 10px; border-radius:6px; font-size:13px; font-weight:600; border:1px solid var(--border); margin-bottom:6px;}
+  .area-option.selected{border-color:var(--accent); background:var(--accent-tint); color:var(--accent);}
+  .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--text); color:var(--bg);
+    padding:10px 16px; border-radius:8px; font-size:12.5px; font-weight:600; z-index:50; display:none;}
+  .toast.show{display:block;}
+
+  @media (max-width:860px){ .sidebar{display:none;} main{padding:16px 14px 84px; max-width:100%;} .bottom-nav{display:flex;} }
+  @media (max-width:420px){ .stats-grid{gap:7px;} .stat-card{padding:9px;} }
+</style>
+</head>
+<body>
+
+<svg style="display:none">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3.5s6.5 7 6.5 11.5a6.5 6.5 0 1 1-13 0C5.5 10.5 12 3.5 12 3.5Z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20.5c.8-3.4 3-5.2 5.5-5.2s4.7 1.8 5.5 5.2"/><circle cx="17" cy="9" r="2.6"/><path d="M15.8 15.3c2.1.2 3.7 1.8 4.3 4.5"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="17" rx="2"/><rect x="9" y="3" width="6" height="3" rx="1"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4.5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 10a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z"/><path d="M10 19.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20.5c1-4 3.8-6 7.5-6s6.5 2 7.5 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s7-6.6 7-12A7 7 0 0 0 5 9.5c0 5.4 7 12 7 12Z"/><circle cx="12" cy="9.5" r="2.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 2.5 20h19L12 4Z"/><path d="M12 10.5v4.2M12 17.5h.01"/></symbol>
+  <symbol id="i-tank" viewBox="0 0 24 24"><path d="M4 7.5c0-2 3.6-3.5 8-3.5s8 1.5 8 3.5-3.6 3.5-8 3.5-8-1.5-8-3.5Z"/><path d="M4 7.5V16c0 2 3.6 3.5 8 3.5s8-1.5 8-3.5V7.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+</svg>
+
+<div class="banner">
+  <svg class="icon"><use href="#i-alert"/></svg>
+  Scheduled outage tonight 22:00–05:00 in Region B — Soweto
+  <a data-view="schedule">View schedule</a>
+</div>
+
+<header class="app">
+  <button class="logo" data-view="dashboard"><span class="mark"><svg class="icon"><use href="#i-droplet"/></svg></span>WaterWatch</button>
+  <button class="area-pill" id="areaBtn"><svg class="icon"><use href="#i-pin"/></svg><span id="areaLabel">Soweto, Region B</span></button>
+  <div class="header-actions">
+    <button class="icon-btn" id="bellBtn"><svg class="icon"><use href="#i-bell"/></svg><span class="dot"></span>
+      <div class="notif-panel" id="notifPanel">
+        <h4>Notifications</h4>
+        <div class="notif-row"><div class="t">Outage tonight 22:00–05:00</div><div class="m">Region B · 1h ago</div></div>
+        <div class="notif-row"><div class="t">Reservoir level update</div><div class="m">Rand Water · 4h ago</div></div>
+        <div class="notif-row"><div class="t">Your report was confirmed</div><div class="m">Vilakazi St · 6h ago</div></div>
+      </div>
+    </button>
+    <button class="btn-primary" id="reportBtn"><svg class="icon"><use href="#i-plus"/></svg>Report Issue</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <button class="nav-item active" data-view="dashboard"><svg class="icon"><use href="#i-home"/></svg>Dashboard</button>
+    <button class="nav-item" data-view="schedule"><svg class="icon"><use href="#i-calendar"/></svg>Schedule</button>
+    <button class="nav-item" data-view="reservoirs"><svg class="icon"><use href="#i-tank"/></svg>Reservoirs</button>
+    <button class="nav-item" data-view="community"><svg class="icon"><use href="#i-users"/></svg>Community</button>
+    <button class="nav-item" data-view="reports"><svg class="icon"><use href="#i-clipboard"/></svg>Reports</button>
+    <button class="nav-item" data-view="notifications"><svg class="icon"><use href="#i-bell"/></svg>Notifications</button>
+    <button class="nav-item" data-view="profile"><svg class="icon"><use href="#i-user"/></svg>Profile</button>
+    <button class="sidebar-cta" id="sidebarReportBtn"><svg class="icon"><use href="#i-plus"/></svg>Report an Issue</button>
+  </aside>
+
+  <main>
+    <div class="view active" id="view-dashboard">
+      <h1 class="greeting">Good evening, Sego</h1>
+      <p class="greeting-sub">Here's what's happening with your water supply today</p>
+
+      <div class="status-card">
+        <div>
+          <div class="label">Current status</div>
+          <div class="value">Water available</div>
+          <div class="sub">Pressure normal · Last checked 12 min ago</div>
+        </div>
+        <div class="pct mono">98%</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><svg class="icon"><use href="#i-tank"/></svg><div class="num mono">74%</div><div class="lbl">Reservoir level</div></div>
+        <div class="stat-card"><svg class="icon"><use href="#i-clock"/></svg><div class="num mono">22:00</div><div class="lbl">Next outage</div></div>
+        <div class="stat-card"><svg class="icon"><use href="#i-clipboard"/></svg><div class="num mono">3</div><div class="lbl">Open reports</div></div>
+      </div>
+
+      <div class="actions-row">
+        <button class="action-btn" data-view="schedule"><svg class="icon"><use href="#i-calendar"/></svg><div class="t">Schedule</div></button>
+        <button class="action-btn" data-view="reservoirs"><svg class="icon"><use href="#i-tank"/></svg><div class="t">Reservoirs</div></button>
+        <button class="action-btn" data-view="community"><svg class="icon"><use href="#i-users"/></svg><div class="t">Community</div></button>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head"><h3>Today's supply timeline</h3><button class="link" data-view="schedule">Full schedule</button></div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-head"><h3>Recent community reports</h3><button class="link" data-view="community">See all</button></div>
+        <div class="report-row">
+          <div class="report-dot" style="background:var(--danger)"></div>
+          <div><div class="report-title">Burst pipe reported — Vilakazi St</div><div class="report-meta">Region B · 34 confirmations · 2h ago</div></div>
+        </div>
+        <div class="report-row">
+          <div class="report-dot" style="background:var(--warning)"></div>
+          <div><div class="report-title">Low pressure — Orlando East</div><div class="report-meta">Region B · 11 confirmations · 5h ago</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="view" id="view-schedule">
+      <div class="section-card placeholder">
+        <svg class="icon"><use href="#i-calendar"/></svg>
+        <h3>Supply schedule</h3>
+        <p>Upcoming outage windows for Soweto, Region B. Tonight's maintenance window is 22:00–05:00; the next two weeks look clear after that.</p>
+      </div>
+    </div>
+    <div class="view" id="view-reservoirs">
+      <div class="section-card placeholder">
+        <svg class="icon"><use href="#i-tank"/></svg>
+        <h3>Reservoirs</h3>
+        <p>Rand Water reservoir feeding your region is at 74% capacity, holding steady compared to this time last week.</p>
+      </div>
+    </div>
+    <div class="view" id="view-community">
+      <div class="section-card placeholder">
+        <svg class="icon"><use href="#i-users"/></svg>
+        <h3>Community reports</h3>
+        <p>2 open issues near you: a burst pipe on Vilakazi St and low pressure in Orlando East. Confirm a report if it matches what you're seeing.</p>
+      </div>
+    </div>
+    <div class="view" id="view-reports">
+      <div class="section-card placeholder">
+        <svg class="icon"><use href="#i-clipboard"/></svg>
+        <h3>Your reports</h3>
+        <p>You have 3 open reports being tracked. You'll get a notification as soon as a municipal team is assigned.</p>
+      </div>
+    </div>
+    <div class="view" id="view-notifications">
+      <div class="section-card placeholder">
+        <svg class="icon"><use href="#i-bell"/></svg>
+        <h3>Notifications</h3>
+        <p>Outage tonight 22:00–05:00, a reservoir level update, and confirmation that your Vilakazi St report was received.</p>
+      </div>
+    </div>
+    <div class="view" id="view-profile">
+      <div class="section-card placeholder">
+        <svg class="icon"><use href="#i-user"/></svg>
+        <h3>Sego</h3>
+        <p>Soweto, Region B · Notifications on · 3 reports filed this year.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button class="bn-item active" data-view="dashboard"><svg class="icon"><use href="#i-home"/></svg>Home</button>
+  <button class="bn-item" data-view="schedule"><svg class="icon"><use href="#i-calendar"/></svg>Schedule</button>
+  <button class="bn-item" id="bnReportBtn"><svg class="icon"><use href="#i-plus"/></svg>Report</button>
+  <button class="bn-item" data-view="community"><svg class="icon"><use href="#i-users"/></svg>Community</button>
+  <button class="bn-item" data-view="profile"><svg class="icon"><use href="#i-user"/></svg>Profile</button>
+</nav>
+
+<div class="overlay" id="reportOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Report an issue</h3><button class="modal-close" id="closeReport"><svg class="icon"><use href="#i-x"/></svg></button></div>
+    <div class="field"><label>Issue type</label>
+      <select id="issueType"><option>Burst pipe</option><option>Low pressure</option><option>No water</option><option>Water quality</option></select>
+    </div>
+    <div class="field"><label>Description</label><textarea placeholder="What are you seeing, and where?"></textarea></div>
+    <button class="btn-primary" style="width:100%; justify-content:center;" id="submitReport"><svg class="icon"><use href="#i-check"/></svg>Submit report</button>
+  </div>
+</div>
+
+<div class="overlay" id="areaOverlay">
+  <div class="modal">
+    <div class="modal-head"><h3>Choose your area</h3><button class="modal-close" id="closeArea"><svg class="icon"><use href="#i-x"/></svg></button></div>
+    <div id="areaList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ---- timeline ----
+  const hours = ['06:00','09:00','12:00','15:00','18:00','21:00','00:00','03:00'];
+  const levels = [1,1,1,0.5,0,0,0,1];
+  const colors = {1:'var(--success)',0.5:'var(--warning)',0:'var(--danger)'};
+  const heights = {1:'100%',0.5:'55%',0:'15%'};
+  const tl = document.getElementById('timeline');
+  hours.forEach((h,i)=>{
+    const lvl = levels[i];
+    const item = document.createElement('div');
+    item.className='tl-item';
+    item.innerHTML = `<div class="tl-bar"><div class="tl-fill" style="height:${heights[lvl]}; background:${colors[lvl]};"></div></div><div class="tl-time mono">${h}</div>`;
+    tl.appendChild(item);
+  });
+
+  // ---- view switching ----
+  function setView(view){
+    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.id === 'view-'+view));
+    document.querySelectorAll('[data-view]').forEach(el=>{
+      if(el.classList.contains('nav-item') || el.classList.contains('bn-item')){
+        el.classList.toggle('active', el.dataset.view === view);
+      }
+    });
+    closeNotif(); closeReport(); closeArea();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.querySelectorAll('[data-view]').forEach(el=>{
+    el.addEventListener('click', ()=> setView(el.dataset.view));
+  });
+
+  // ---- notifications dropdown ----
+  const notifPanel = document.getElementById('notifPanel');
+  const bellBtn = document.getElementById('bellBtn');
+  function closeNotif(){ notifPanel.classList.remove('open'); }
+  bellBtn.addEventListener('click', (e)=>{ e.stopPropagation(); notifPanel.classList.toggle('open'); });
+  document.addEventListener('click', (e)=>{ if(!bellBtn.contains(e.target)) closeNotif(); });
+
+  // ---- report modal ----
+  const reportOverlay = document.getElementById('reportOverlay');
+  function openReport(){ reportOverlay.classList.add('open'); }
+  function closeReport(){ reportOverlay.classList.remove('open'); }
+  document.getElementById('reportBtn').addEventListener('click', openReport);
+  document.getElementById('sidebarReportBtn').addEventListener('click', openReport);
+  document.getElementById('bnReportBtn').addEventListener('click', openReport);
+  document.getElementById('closeReport').addEventListener('click', closeReport);
+  reportOverlay.addEventListener('click', (e)=>{ if(e.target === reportOverlay) closeReport(); });
+  document.getElementById('submitReport').addEventListener('click', ()=>{
+    closeReport();
+    showToast('Report submitted — thanks for helping your community');
+  });
+
+  // ---- area modal ----
+  const areas = ['Soweto, Region B','Sandton, Region E','Alexandra, Region E','Midrand, Region A','Randburg, Region C'];
+  const areaOverlay = document.getElementById('areaOverlay');
+  const areaList = document.getElementById('areaList');
+  const areaLabel = document.getElementById('areaLabel');
+  function renderAreas(){
+    areaList.innerHTML = areas.map(a=>
+      `<div class="area-option ${a===areaLabel.textContent?'selected':''}" data-area="${a}">${a}</div>`
+    ).join('');
+    areaList.querySelectorAll('.area-option').forEach(opt=>{
+      opt.addEventListener('click', ()=>{
+        areaLabel.textContent = opt.dataset.area;
+        closeArea();
+        showToast('Area updated to '+opt.dataset.area);
+      });
+    });
+  }
+  function openArea(){ renderAreas(); areaOverlay.classList.add('open'); }
+  function closeArea(){ areaOverlay.classList.remove('open'); }
+  document.getElementById('areaBtn').addEventListener('click', openArea);
+  document.getElementById('closeArea').addEventListener('click', closeArea);
+  areaOverlay.addEventListener('click', (e)=>{ if(e.target === areaOverlay) closeArea(); });
+
+  // ---- toast ----
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+  }
+</script>
+
+</body>
+</html>
